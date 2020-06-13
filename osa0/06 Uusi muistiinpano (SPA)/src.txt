@@ -1,0 +1,12 @@
+note over selain:
+selain alkaa suorittaa js-koodia,
+joka lisää muistiinpanon listaan, tyhjentää 
+lomakkeen, piirtää listan uudestaan ja
+lähettää muistiinpanon palvelimelle
+end note
+
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+
+note over palvelin:
+palvelin tallentaa muistiinpanon
+end note
