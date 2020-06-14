@@ -30,9 +30,7 @@ const App = (props) => {
   }
 
   const currentAnecdote = anecdotes[selected]
-  const highestVoted = anecdotes.reduce((max, current) =>
-    current.votes > max.votes ? current : max
-  )
+  const highestVoted = anecdotes.reduce((a, b) => (b.votes > a.votes) ? b : a)
 
   return (
     <div>
