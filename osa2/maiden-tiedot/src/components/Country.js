@@ -15,7 +15,7 @@ const Country = (props) => {
       .get(endpoint)
       .then(resp => {
         const data = resp.data
-        console.log(data)
+        console.log('weather', data)
         setWeather(data.current)
       })
   }, [])
@@ -39,11 +39,13 @@ const Country = (props) => {
             {language.name}
           </li>)}
       </ul>
+      {!weather &&
+        <p>Loading weather data...</p>
+      }
       {weather &&
         <div>
           <h3>Weather in {country.capital}</h3>
-          <b>temperature:</b> {weather.temperature} celsius
-                    <br />
+          <b>temperature:</b> {weather.temperature} celsius <br />
           {weather.weather_icons.map(icon =>
             <img
               src={icon}
