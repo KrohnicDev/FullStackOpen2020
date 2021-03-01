@@ -6,8 +6,8 @@ import personService from './service/PersonService'
 import Notification from './components/Notification'
 
 const notificationTypes = {
-  error: "error",
-  info: "info"
+  ERROR: "error",
+  INFO: "info"
 }
 
 const App = () => {
@@ -37,15 +37,20 @@ const App = () => {
     }
 
     if (existingPerson) {
-      const updateConfirmed = window.confirm(`${newName} already exists in the phonebook. Do you want replace their number with a new one?`)
+      const hasConfirmedUpdate = window.confirm(`${newName} already exists in the phonebook. Do you want replace their number with a new one?`)
 
-      if (updateConfirmed) {
+      if (hasConfirmedUpdate) {
         personService
           .update({ ...existingPerson, number: newNumber })
           .then(() => showNotification(
-            `Updated ${newName}`, notificationTypes.info))
-          .catch(() => showNotification(
-            `Couldn't update ${newName}. Contact was already removed from the server`, notificationTypes.error))
+            `Updated ${newName}`, notificationTypes.INFO))
+          .catch(err => {
+            console.log(err.response)
+            const response = err.response
+            const message = response ? response.data.error : err.message
+            showNotification(
+              `Couldn't update ${newName}. ${message}`, notificationTypes.ERROR)
+          })
           .finally(refreshPersons)
       }
 
@@ -53,9 +58,12 @@ const App = () => {
       personService
         .create(newPerson)
         .then(() => showNotification(
-          `Added a new contact: ${newPerson.name}`, notificationTypes.info))
-        .catch(() => showNotification(
-          'Operation failed'))
+          `Added a new contact: ${newPerson.name}`, notificationTypes.INFO))
+        .catch(err => {
+          const response = err.response
+          const message = response ? response.data.error : err.message
+          showNotification(message, notificationTypes.ERROR)
+        })
         .finally(refreshPersons)
     }
 
@@ -69,15 +77,18 @@ const App = () => {
       .then(persons => {
         setPersons(persons)
       })
+      .catch(err => showNotification(
+        `Couldn't fetch persons from the server.`, notificationTypes.ERROR
+      ))
   }
 
   const deletePerson = (person) => {
     personService
       .deleteOne(person.id)
       .then(() => showNotification(
-        `${person.name} deleted`, notificationTypes.info))
+        `${person.name} deleted`, notificationTypes.INFO))
       .catch(() => showNotification(
-        'Person not found', notificationTypes.error))
+        'Person not found', notificationTypes.ERROR))
       .finally(refreshPersons)
   }
 
