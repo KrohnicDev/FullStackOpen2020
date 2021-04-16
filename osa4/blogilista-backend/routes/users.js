@@ -5,9 +5,18 @@ const UserModel = require('../models/user')
 usersRouter.get('/', async (req, res) => {
   const users = await UserModel
     .find({})
-    .populate('blogs', { title: 1, likes: 1, url: 1 })
+    .populate('blogs', { title: 1, likes: 1, url: 1, author: 1 })
 
   res.json(users.map(u => u.toJSON()))
+})
+
+usersRouter.get('/:id', async (req, res) => {
+  const id = req.params.id
+  const { name, username, blogs } = await UserModel
+    .findById(id)
+    .populate('blogs', { title: 1, likes: 1, url: 1, author: 1 })
+  const user = { name, username, blogs }
+  res.json(user.toJSON())
 })
 
 usersRouter.post('/', async (req, res) => {
